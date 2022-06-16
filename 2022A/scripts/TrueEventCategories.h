@@ -192,3 +192,12 @@ const SpillCut kCCNuMuMultiPi([](const caf::SRSpillProxy* sp) {
 const SpillCut kCCNuMuZeroPi([](const caf::SRSpillProxy* sp) {
     return kCCNuMu(sp) && kNPi(sp) == 0;
   });
+
+std::vector<TrueCategory> ncpizero_categories = {
+  {"Signal (NC #pi^{0})", kNCPiZero, kViolet+2, "Signal"},
+  {"Other NC", kNC && !kNCPiZero, kOrange+2, "NC"},
+  {"CC #nu_{#mu}", kCCNuMu, kMagenta+2, "CCNuMu"},
+  {"CC #nu_{e}", kCCNuE, kCyan+2, "CCNuE"},
+  {"PileUp", kDirt, kOrange+3, "Dirt"},
+  {"Other", !kNC && !kCCNuMu && !kCCNuE && !kDirt, kBlack, "Other"},
+};

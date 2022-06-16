@@ -6,3 +6,10 @@ struct Plot {
   std::string label;
   std::vector<float> legBox = {.1, .1, .4, .3};
 };
+
+struct TrueCategory {
+  std::string name = "";
+  SpillCut cut = kNoSpillCut;
+  int colour = kBlack;
+  std::string label = "";
+};
