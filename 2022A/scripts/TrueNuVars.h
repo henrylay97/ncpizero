@@ -28,3 +28,11 @@ const SpillVar kTrueLeptonAngle([](const caf::SRSpillProxy* sp) -> float {
 
     return TMath::RadToDeg() * nuDir.Angle(lepDir);
   });
+
+std::vector<Plot> nuPlots = { { "True Neutrino Energy", kTrueNuEn, Binning::Simple(12,0,3), ";E_{#nu} (GeV)", "nu_en", {.31,.2,.55,.35} },
+			      { "Bjorken X", kTrueNuBjorkenX, Binning::Simple(10,0,1), ";Bjorken X", "bjorken_x", {.29,.22,.54,.37} },
+			      { "Inelasticity Y", kTrueNuInelasticityY, Binning::Simple(10,0,1), ";Inelasticity Y", "inelasticity_y", {.37,.22,.62,.37} },
+			      { "Momentum Transfer", kTrueNuQ2, Binning::Simple(10,0,1), ";Q^{2} (GeV^{2})", "q2", {.29,.22,.54,.37} },
+			      { "Lepton Momentum", kTrueLeptonP, Binning::Simple(10,0,5), ";p_{l} (GeV)", "lepton_mom", {.43, .4, .68, .55} },
+			      { "Lepton Angle", kTrueLeptonAngle, Binning::Simple(12,0,180), ";#theta_{#nu l} (#circ)", "lepton_angle", {.27,.22,.52,.37} }
+};
