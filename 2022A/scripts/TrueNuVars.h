@@ -29,10 +29,10 @@ const SpillVar kTrueLeptonAngle([](const caf::SRSpillProxy* sp) -> float {
     return TMath::RadToDeg() * nuDir.Angle(lepDir);
   });
 
-std::vector<Plot> nuPlots = { { "True Neutrino Energy", kTrueNuEn, Binning::Simple(24,0,3), ";E_{#nu} (GeV);Events", "nu_en", {.6,.57,.88,.87} },
-			      { "Bjorken X", kTrueNuBjorkenX, Binning::Simple(20,0,1), ";Bjorken X;Events", "bjorken_x",  {.6,.57,.88,.87} },
-			      { "Inelasticity Y", kTrueNuInelasticityY, Binning::Simple(20,0,1), ";Inelasticity Y;Events", "inelasticity_y",  {.6,.57,.88,.87} },
-			      { "Momentum Transfer", kTrueNuQ2, Binning::Simple(20,0,1), ";Q^{2} (GeV^{2});Events", "q2",  {.6,.57,.88,.87} },
-			      { "Lepton Momentum", kTrueLeptonP, Binning::Simple(24,0,3), ";p_{l} (GeV);Events", "lepton_mom", {.6,.57,.88,.87} },
-			      { "Lepton Angle", kTrueLeptonAngle, Binning::Simple(24,0,180), ";#theta_{#nu l} (#circ);Events", "lepton_angle", {.6,.57,.88,.87} }
+std::vector<Plot> nuPlots = { { "True Neutrino Energy", kTrueNuEn, Binning::Simple(24,0,3), ";E_{#nu} (GeV);Events", "nu_en", {.59,.57,.89,.85} },
+			      { "Bjorken X", kTrueNuBjorkenX, Binning::Simple(20,0,1), ";Bjorken X;Events", "bjorken_x",  {.59,.57,.89,.85} },
+			      { "Inelasticity Y", kTrueNuInelasticityY, Binning::Simple(20,0,1), ";Inelasticity Y;Events", "inelasticity_y",  {.59,.57,.89,.85} },
+			      { "Momentum Transfer", kTrueNuQ2, Binning::Simple(20,0,1), ";Q^{2} (GeV^{2});Events", "q2",  {.59,.57,.89,.85} },
+			      { "Lepton Momentum", kTrueLeptonP, Binning::Simple(24,0,3), ";p_{l} (GeV);Events", "lepton_mom", {.59,.57,.89,.85} },
+			      { "Lepton Angle", kTrueLeptonAngle, Binning::Simple(24,0,180), ";#theta_{#nu l} (#circ);Events", "lepton_angle", {.59,.57,.89,.85} }
 };
