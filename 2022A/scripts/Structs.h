@@ -1,15 +1,17 @@
+#include "TString.h"
+
 struct Plot {
-  std::string name = "";
+  TString name = "";
   SpillVar variable; 
   Binning binning;
-  std::string axes_labels;
-  std::string label;
+  TString axes_labels;
+  TString label;
   std::vector<float> legBox = {.1, .1, .4, .3};
 };
 
 struct TrueCategory {
-  std::string name = "";
+  TString name = "";
   SpillCut cut = kNoSpillCut;
   int colour = kBlack;
-  std::string label = "";
+  TString label = "";
 };
