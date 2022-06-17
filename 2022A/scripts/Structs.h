@@ -1,8 +1,9 @@
 #include "TString.h"
 
+template <typename T>
 struct Plot {
   TString name = "";
-  SpillVar variable; 
+  T variable; 
   Binning binning;
   TString axes_labels;
   TString label;
@@ -14,4 +15,11 @@ struct TrueCategory {
   SpillCut cut = kNoSpillCut;
   int colour = kBlack;
   TString label = "";
+};
+
+struct Particle {
+  TString name = "";
+  int colour = kBlack;
+  TString label = "";
+  ParticleCut cut = kNoParticleCut;
 };
