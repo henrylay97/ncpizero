@@ -23,3 +23,9 @@ struct Particle {
   TString label = "";
   ParticleCut cut = kNoParticleCut;
 };
+
+struct CutDef {
+  TString name = "";
+  TString label = "";
+  SpillCut cut = kNoSpillCut;
+};

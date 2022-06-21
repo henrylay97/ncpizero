@@ -66,6 +66,10 @@ const SpillCut kPileUp([](const caf::SRSpillProxy* sp) {
     return nnuint > 1;
   });
 
+const SpillCut kTrueFV([](const caf::SRSpillProxy *sp) {
+    return !kCosmicSpill(sp) && PtInVolAbsX(sp->mc.nu[kBestNuID(sp)].position, fvndAbs);
+  });
+
 const SpillCut kDirt([](const caf::SRSpillProxy *sp) {
     return !kCosmicSpill(sp) && !PtInVolAbsX(sp->mc.nu[kBestNuID(sp)].position, avnd);
   });
@@ -137,6 +141,10 @@ const SpillCut kNCPiZero([](const caf::SRSpillProxy* sp) {
     return kNC(sp) && kNChargedPi(sp) == 0 && kNPiZero(sp) == 1;
   });
 
+const SpillCut kSignal([](const caf::SRSpillProxy* sp) {
+    return kTrueFV(sp) && kNCPiZero(sp);
+  });
+
 const SpillCut kNCNPiZero([](const caf::SRSpillProxy* sp) {
     return kNC(sp) && kNChargedPi(sp) == 0 && kNPiZero(sp) > 1;
   });
@@ -194,10 +202,20 @@ const SpillCut kCCNuMuZeroPi([](const caf::SRSpillProxy* sp) {
   });
 
 std::vector<TrueCategory> ncpizero_categories = {
-  {"Signal (NC #pi^{0})", kNCPiZero, kMagenta+2, "Signal"},
-  {"Other NC", kNC && !kNCPiZero, kOrange+2, "NC"},
+  {"Signal (NC #pi^{0})", kSignal, kMagenta+2, "Signal"},
+  {"Other NC", kNC && !kSignal, kOrange+2, "NC"},
   {"CC #nu_{#mu}", kCCNuMu, kGreen+2, "CCNuMu"},
   {"CC #nu_{e}", kCCNuE, kCyan+2, "CCNuE"},
   {"Dirt", kDirt, kOrange+3, "Dirt"},
   //  {"Other", !kNC && !kCCNuMu && !kCCNuE && !kDirt, kBlack, "Other"},
+};
+
+std::vector<TrueCategory> ncpizero_sel_categories = {
+  {"Signal (NC #pi^{0})", kSignal, kMagenta+2, "Signal"},
+  {"Other NC", kNC && !kSignal, kOrange+2, "NC"},
+  {"CC #nu_{#mu}", kCCNuMu, kGreen+2, "CCNuMu"},
+  {"CC #nu_{e}", kCCNuE, kCyan+2, "CCNuE"},
+  {"Dirt", kDirt, kOrange+3, "Dirt"},
+  {"Cosmic", kCosmicSpill, kRed+1, "Cosmic"},
+  //  {"Other", !kNC && !kCCNuMu && !kCCNuE && !kDirt && !kCosmicSpill, kBlack, "Other"},
 };
