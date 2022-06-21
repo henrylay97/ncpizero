@@ -30,9 +30,11 @@ void physics_book()
   std::vector<Spectrum*> sNu;
 
   std::vector<Particle> particles = { {"Muon", kRed+2, "muon", kPrimaryMuonCut},
+				      {"Cosmic Muon", kTeal+2, "cosmic_muon", kCosmicMuonCut},
+				      {"Dirt Muon", kOrange-6, "cosmic_muon", kCosmicMuonCut},
 				      {"Electron", kBlue+2, "electron", kPrimaryElectronCut},
 				      {"Charged Pion", kGreen+2, "charged_pion", kPrimaryChargedPionCut},
-				      {"Neutral Pion", kGreen+2, "neutral_pion", kPrimaryNeutralPionCut},
+				      {"Neutral Pion", kYellow+1, "neutral_pion", kPrimaryNeutralPionCut},
 				      {"Photon", kMagenta+2, "photon", kPrimaryPhotonCut},
 				      {"Proton", kCyan+2, "proton", kPrimaryProtonCut},
   };
@@ -41,8 +43,20 @@ void physics_book()
     {
       for(auto const& plot : particlePlots)
 	{
+	  Binning bins = plot.binning;
+	  if(plot.label == "energy" || plot.label == "momentum")
+	    {
+
+	
+	      if(particle.label == "electron") bins = Binning::Simple(25,0,5);
+	      else if(particle.label == "charged_pion" || particle.label == "neutral_pion") 
+		bins = Binning::Simple(25,0,2);
+	      else if(particle.label == "photon") bins = Binning::Simple(25,0,0.05);
+	      else if(particle.label == "proton") bins = Binning::Simple(25,0,2);
+	    }
+	  
 	  std::string name = *plot.name.Data() + "_" + *particle.name.Data();
-	  sNu.emplace_back(new Spectrum(name, plot.binning,
+	  sNu.emplace_back(new Spectrum(name, bins,
 					loaderNu, plot.variable, kNoSpillCut, particle.cut));
 	}
     }
@@ -64,6 +78,8 @@ void physics_book()
 
 	  if(save)
 	    {
+	      canvas->SaveAs(saveDir + "/" + particle.label + "_" + plot.label + ".png");
+	      canvas->SaveAs(saveDir + "/" + particle.label + "_" + plot.label + ".pdf");
 	    }
 	  ++i;
 	}
