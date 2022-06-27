@@ -1,3 +1,9 @@
+const FidVol fvndPiZero { 
+    +1.5, +185.,
+    -185., +185.,
+    +20.,+470
+};
+
 const SpillCut kCosmicSpill([](const caf::SRSpillProxy* sp) {
     return sp->mc.nnu == 0;
   });

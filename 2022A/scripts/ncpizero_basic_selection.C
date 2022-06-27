@@ -26,8 +26,8 @@ void ncpizero_basic_selection()
   selectionstyle();
   setlocale(LC_NUMERIC, "");
   
-  const std::string inputNameNu = "defname: official_MCP2022A_prodoverlay_corsika_cosmics_proton_genie_rockbox_sce_reco2_concat_flat_caf_sbnd with limit 20";
-  const std::string inputNameIntime = "defname: official_MCP2022A_prodcorsika_proton_intime_filter_sce_reco2_concat_flat_caf_sbnd with limit 10";
+  const std::string inputNameNu = "defname: official_MCP2022A_prodoverlay_corsika_cosmics_proton_genie_rockbox_sce_reco2_concat_flat_caf_sbnd with limit 2000";
+  const std::string inputNameIntime = "defname: official_MCP2022A_prodcorsika_proton_intime_filter_sce_reco2_concat_flat_caf_sbnd with limit 100";
 
   const double gPOT = 6.6e20;
   const bool save = true;
@@ -99,7 +99,7 @@ void ncpizero_basic_selection()
 	  canvas->cd();
 	  TLegend *legend = new TLegend(plot.legBox[0], plot.legBox[1], plot.legBox[2], plot.legBox[3]);
 	  THStack *stack = new THStack("stack_" + plot.name + "_" + cut.name, plot.axes_labels);
-
+	  
 	  double selectedSig = 0., selected = 0.;
 
 	  for(auto const& category : ncpizero_sel_categories)
@@ -117,7 +117,6 @@ void ncpizero_basic_selection()
 
 	      selected += integral;
 
-
 	      hist->SetLineColor(category.colour);
 	      hist->SetFillColorAlpha(category.colour, 0.4);
 
@@ -128,6 +127,14 @@ void ncpizero_basic_selection()
 	  if(plot.name == "FV Cut")
 	    stack->SetMaximum(1.8 * stack->GetMaximum());
 	  stack->Draw("hist");
+
+	  const std::vector<std::string> binlabels = plot.binning.Labels();
+	  if(!binlabels.empty())
+	    {
+	      for(int bin = 1; bin <= stack->GetXaxis()->GetNbins(); ++bin)
+		stack->GetXaxis()->SetBinLabel(bin, binlabels[bin-1].c_str());
+	    }
+
 	  legend->SetLineColorAlpha(0,0);
 	  legend->SetTextSize(0.04);
 	  legend->Draw();
@@ -139,9 +146,10 @@ void ncpizero_basic_selection()
 	  
 	  if(plot.name == "FV Cut")
 	    { box[0] = .25; box[1] = .68; box[2] = .47; box[3] = .80; }
-	  else if(plot.name == "CRUMBS Score")
+	  else if(plot.name == "CRUMBS Score" || plot.name == "Leading Shower PDG" || plot.name == "SubLeading Shower PDG")
 	    { box[0] = .25; box[1] = .43; box[2] = .47; box[3] = .55; }
- 
+	  else if(plot.name == "Longest Track PDG")
+ 	    { box[0] = .35; box[1] = .43; box[2] = .57; box[3] = .55; }
 	  TPaveText *pvt = new TPaveText(box[0],box[1],box[2],box[3], "NB NDC");
 	  pvt->SetTextAlign(12);
 	  pvt->SetTextSize(0.05);
@@ -154,6 +162,7 @@ void ncpizero_basic_selection()
 	      canvas->SaveAs(saveDir + "/" + cut.label + "/" + plot.label + "_" + cut.label + ".png");
 	      canvas->SaveAs(saveDir + "/" + cut.label + "/" + plot.label + "_" + cut.label + ".pdf");
 	    }
+	  delete canvas, legend, stack, pvt;
 	}
       ++j;
     }

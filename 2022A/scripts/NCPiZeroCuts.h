@@ -48,6 +48,14 @@ const SpillCut kHasNoDazzleMuons([](const caf::SRSpillProxy* sp) {
     return kNDazzleMuons(sp) == 0;
   });
 
+const SpillCut kHasNoDazzlePions([](const caf::SRSpillProxy* sp) {
+    return kNDazzlePions(sp) == 0;
+  });
+
+const SpillCut kHasNoDazzleOther([](const caf::SRSpillProxy* sp) {
+    return kNDazzleOther(sp) == 0;
+  });
+
 const SpillCut kHasAtLeast2Shws([](const caf::SRSpillProxy* sp) {
     auto const& slc = sp->slc[kBestSlcID(sp)];
 
@@ -62,5 +70,7 @@ std::vector<CutDef> ncpizero_cuts = { { "No Cut", "no_cut", kNoSpillCut },
 				      { "Has CRUMBS Slc", "has_crumbs_slc", kHasCRUMBSSlc },
 				      { "Is FV", "is_fv", kIsFV },
 				      { "Has No Dazzle Muons", "has_no_dazzle_muons", kHasNoDazzleMuons },
+				      { "Has No Dazzle Pions", "has_no_dazzle_pions", kHasNoDazzlePions },
+				      { "Has No Dazzle Other", "has_no_dazzle_other", kHasNoDazzleOther },
 				      { "Has At Least 2 Showers", "has_two_shw", kHasAtLeast2Shws },
 };
