@@ -10,11 +10,14 @@ using namespace ana;
 #include "Structs.h"
 #include "TrueEventCategories.h"
 #include "NCPiZeroTruthVars.h"
+#include "NCPiZeroRecoVars.h"
+#include "NCPiZeroCuts.h"
 
 #include "TCanvas.h"
 #include "TLegend.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TSystem.h"
 
 #include <string>
 
@@ -28,24 +31,28 @@ void pi_zero_reco()
   const double gPOT = 6.6e20;
   const bool save = true;
   const TString saveDir = "/sbnd/data/users/hlay/ncpizero/2022A/plots/pi_zero_reco";
-
+  
+  const SpillCut spillcut = kSignalTwoGamma && kFullSelection;
+  const TString cutname   = "dedx_selection";
+  gSystem->Exec("mkdir -p " + saveDir + "/" + cutname);
+ 
   SpectrumLoader loaderNu(inputNameNu);
   const Binning gridBins = Binning::Simple(4,0.5,4.5);
   const Binning gridBins0 = Binning::Simple(4,-0.5,3.5);
   const Binning gridBins1 = Binning::Simple(5,-0.5,4.5);
 
   Spectrum sPiZeroSimpleRecoGrid("pizero_reco_grid", gridBins, loaderNu, kPiZeroSimpleRecoStatus, 
-				 kSignalTwoGamma);
+				 spillcut);
   Spectrum sPiZeroThresholdRecoGrid("pizero_reco_grid", gridBins, loaderNu,
-				    kPiZeroThresholdRecoStatus, kSignalTwoGamma);
+				    kPiZeroThresholdRecoStatus, spillcut);
   Spectrum sPiZeroHighThresholdRecoGrid("pizero_reco_grid", gridBins, loaderNu,
-					kPiZeroHighThresholdRecoStatus, kSignalTwoGamma);
-  Spectrum sPhotonOneShwTrkRecoGrid("photon_one_shw_trk_reco_grid", loaderNu, gridBins1, 
-				 kPiZeroPhotonOneRecoShws, gridBins0, kPiZeroPhotonOneRecoTrks,
-				 kSignalTwoGamma);
-  Spectrum sPhotonTwoShwTrkRecoGrid("photon_one_shw_trk_reco_grid", loaderNu, gridBins1, 
-				 kPiZeroPhotonTwoRecoShws, gridBins0, kPiZeroPhotonTwoRecoTrks,
-				 kSignalTwoGamma);
+					kPiZeroHighThresholdRecoStatus, spillcut);
+  Spectrum sLeadingPhotonShwTrkRecoGrid("leading_photon_shw_trk_reco_grid", loaderNu, gridBins1, 
+					kPiZeroLeadingPhotonRecoShws, gridBins0, 
+					kPiZeroLeadingPhotonRecoTrks, spillcut);
+  Spectrum sSubLeadingPhotonShwTrkRecoGrid("leading_photon_shw_trk_reco_grid", loaderNu, gridBins1, 
+					   kPiZeroSubLeadingPhotonRecoShws, gridBins0, 
+					   kPiZeroSubLeadingPhotonRecoTrks, spillcut);
 
   loaderNu.Go();
 
@@ -73,8 +80,8 @@ void pi_zero_reco()
 
   if(save)
     {
-      simple_reco_canvas->SaveAs(saveDir + "/pi_zero_simple_reco_grid.png");
-      simple_reco_canvas->SaveAs(saveDir + "/pi_zero_simple_reco_grid.pdf");
+      simple_reco_canvas->SaveAs(saveDir + "/" + cutname + "/pi_zero_simple_reco_grid.png");
+      simple_reco_canvas->SaveAs(saveDir + "/" + cutname + "/pi_zero_simple_reco_grid.pdf");
     }
 
   TCanvas *threshold_reco_canvas = new TCanvas("threshold_reco_canvas","threshold_reco_canvas");
@@ -99,8 +106,8 @@ void pi_zero_reco()
 
   if(save)
     {
-      threshold_reco_canvas->SaveAs(saveDir + "/pi_zero_threshold_reco_grid.png");
-      threshold_reco_canvas->SaveAs(saveDir + "/pi_zero_threshold_reco_grid.pdf");
+      threshold_reco_canvas->SaveAs(saveDir + "/" + cutname + "/pi_zero_threshold_reco_grid.png");
+      threshold_reco_canvas->SaveAs(saveDir + "/" + cutname + "/pi_zero_threshold_reco_grid.pdf");
     }
 
   TCanvas *high_threshold_reco_canvas = new TCanvas("high_threshold_reco_canvas","high_threshold_reco_canvas");
@@ -125,38 +132,38 @@ void pi_zero_reco()
 
   if(save)
     {
-      high_threshold_reco_canvas->SaveAs(saveDir + "/pi_zero_high_threshold_reco_grid.png");
-      high_threshold_reco_canvas->SaveAs(saveDir + "/pi_zero_high_threshold_reco_grid.pdf");
+      high_threshold_reco_canvas->SaveAs(saveDir + "/" + cutname + "/pi_zero_high_threshold_reco_grid.png");
+      high_threshold_reco_canvas->SaveAs(saveDir + "/" + cutname + "/pi_zero_high_threshold_reco_grid.pdf");
     }
 
-  TCanvas *photon_one_shw_trk_reco_canvas = new TCanvas("photon_one_shw_trk_reco_canvas","photon_one_shw_trk_reco_canvas");
-  photon_one_shw_trk_reco_canvas->cd();
-  photon_one_shw_trk_reco_canvas->SetTopMargin(0.15);
+  TCanvas *leading_photon_shw_trk_reco_canvas = new TCanvas("leading_photon_shw_trk_reco_canvas","leading_photon_shw_trk_reco_canvas");
+  leading_photon_shw_trk_reco_canvas->cd();
+  leading_photon_shw_trk_reco_canvas->SetTopMargin(0.15);
 
-  TH2D* photonOneShwTrkRecoGrid = (TH2D*) sPhotonOneShwTrkRecoGrid.ToTH2(gPOT);
-  photonOneShwTrkRecoGrid->SetMarkerSize(3);
-  photonOneShwTrkRecoGrid->SetTitle("#gamma_{1};nShowers;nTracks");
-  photonOneShwTrkRecoGrid->DrawNormalized("COLTEXT");
+  TH2D* leadingPhotonShwTrkRecoGrid = (TH2D*) sLeadingPhotonShwTrkRecoGrid.ToTH2(gPOT);
+  leadingPhotonShwTrkRecoGrid->SetMarkerSize(3);
+  leadingPhotonShwTrkRecoGrid->SetTitle("#gamma_{1};nShowers;nTracks");
+  leadingPhotonShwTrkRecoGrid->DrawNormalized("COLTEXT");
 
   if(save)
     {
-      photon_one_shw_trk_reco_canvas->SaveAs(saveDir + "/photon_one_shw_trk_reco_grid.png");
-      photon_one_shw_trk_reco_canvas->SaveAs(saveDir + "/photon_one_shw_trk_reco_grid.pdf");
+      leading_photon_shw_trk_reco_canvas->SaveAs(saveDir + "/" + cutname + "/leading_photon_shw_trk_reco_grid.png");
+      leading_photon_shw_trk_reco_canvas->SaveAs(saveDir + "/" + cutname + "/leading_photon_shw_trk_reco_grid.pdf");
     }
 
-  TCanvas *photon_two_shw_trk_reco_canvas = new TCanvas("photon_two_shw_trk_reco_canvas","photon_two_shw_trk_reco_canvas");
-  photon_two_shw_trk_reco_canvas->cd();
-  photon_two_shw_trk_reco_canvas->SetTopMargin(0.15);
+  TCanvas *subleading_photon_shw_trk_reco_canvas = new TCanvas("subleading_photon_shw_trk_reco_canvas","subleading_photon_shw_trk_reco_canvas");
+  subleading_photon_shw_trk_reco_canvas->cd();
+  subleading_photon_shw_trk_reco_canvas->SetTopMargin(0.15);
 
-  TH2D* photonTwoShwTrkRecoGrid = (TH2D*) sPhotonTwoShwTrkRecoGrid.ToTH2(gPOT);
-  photonTwoShwTrkRecoGrid->SetMarkerSize(3);
-  photonTwoShwTrkRecoGrid->SetTitle("#gamma_{2};nShowers;nTracks");
-  photonTwoShwTrkRecoGrid->DrawNormalized("COLTEXT");
+  TH2D* subLeadingPhotonShwTrkRecoGrid = (TH2D*) sSubLeadingPhotonShwTrkRecoGrid.ToTH2(gPOT);
+  subLeadingPhotonShwTrkRecoGrid->SetMarkerSize(3);
+  subLeadingPhotonShwTrkRecoGrid->SetTitle("#gamma_{2};nShowers;nTracks");
+  subLeadingPhotonShwTrkRecoGrid->DrawNormalized("COLTEXT");
 
   if(save)
     {
-      photon_two_shw_trk_reco_canvas->SaveAs(saveDir + "/photon_two_shw_trk_reco_grid.png");
-      photon_two_shw_trk_reco_canvas->SaveAs(saveDir + "/photon_two_shw_trk_reco_grid.pdf");
+      subleading_photon_shw_trk_reco_canvas->SaveAs(saveDir +"/" + cutname + "/subleading_photon_shw_trk_reco_grid.png");
+      subleading_photon_shw_trk_reco_canvas->SaveAs(saveDir +"/" + cutname + "/subleading_photon_shw_trk_reco_grid.pdf");
     }
 
 }

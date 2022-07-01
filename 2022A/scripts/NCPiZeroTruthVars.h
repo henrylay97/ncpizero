@@ -20,17 +20,17 @@ const SpillCut kSignalTwoGamma([](const caf::SRSpillProxy* sp) {
     return false;
   });
 
-/*
-const SpillVar kPiZeroPhotonIDs([](const caf::SRSpillProxy* sp) -> std::pair<unsigned, unsigned> {
+
+const SpillVar kPiZeroLeadingPhotonID([](const caf::SRSpillProxy* sp) -> unsigned {
+    if(!kSignalTwoGamma(sp)) return false;
+
     const unsigned pion_id = kPiZeroID(sp);
-    if(pion_id == 999999)
-      return std::pair<unsigned, unsigned>(999999,999999);
 
     auto const& pion = sp->mc.nu[kBestNuID(sp)].prim[pion_id];
     auto const& daughters = pion.daughters;
 
     if(daughters.size() != 2)
-      return std::pair<unsigned, unsigned>(999999,999999);
+      return 999999;
 
     int photon_one_id = daughters[0];
     int photon_two_id = daughters[1];
@@ -54,26 +54,51 @@ const SpillVar kPiZeroPhotonIDs([](const caf::SRSpillProxy* sp) -> std::pair<uns
           }
       }
 
-    return en_one > en_two ? std::pair<unsigned, unsigned>(one_id, two_id) : std::pair<unsigned, unsigned>(two_id, one_id);
+    return en_one > en_two ? one_id : two_id;
   });
-*/
 
-const SpillVar kPiZeroSimpleRecoStatus([](const caf::SRSpillProxy *sp) {
-    if(!kSignalTwoGamma(sp)) 
-      return -1.;
+const SpillVar kPiZeroSubLeadingPhotonID([](const caf::SRSpillProxy* sp) -> unsigned {
+    if(!kSignalTwoGamma(sp)) return false;
 
     const unsigned pion_id = kPiZeroID(sp);
-    if(pion_id == 999999)
-      return -1.;
 
     auto const& pion = sp->mc.nu[kBestNuID(sp)].prim[pion_id];
     auto const& daughters = pion.daughters;
 
     if(daughters.size() != 2)
-      return -1.;
+      return 999999;
 
     int photon_one_id = daughters[0];
     int photon_two_id = daughters[1];
+
+    double en_one(-999999.), en_two(-999999.);
+
+    unsigned one_id(999999), two_id(999999);
+
+    for(int i = 0; i < sp->ntrue_particles; ++i)
+      {
+        auto const& part = sp->true_particles[i];
+        if(part.G4ID == photon_one_id)
+          {
+            en_one = part.genE;
+            one_id = i;
+          }
+        if(part.G4ID == photon_two_id)
+          {
+            en_two = part.genE;
+            two_id = i;
+          }
+      }
+
+    return en_one > en_two ? two_id : one_id;
+  });
+
+
+const SpillVar kPiZeroSimpleRecoStatus([](const caf::SRSpillProxy *sp) {
+    if(!kSignalTwoGamma(sp)) return -1.;
+    
+    int photon_one_id = sp->true_particles[kPiZeroLeadingPhotonID(sp)].G4ID;
+    int photon_two_id = sp->true_particles[kPiZeroSubLeadingPhotonID(sp)].G4ID;
 
     bool reco_one = false, reco_two = false;
 
@@ -100,21 +125,10 @@ const SpillVar kPiZeroSimpleRecoStatus([](const caf::SRSpillProxy *sp) {
   });
 	
 const SpillVar kPiZeroThresholdRecoStatus([](const caf::SRSpillProxy *sp) {
-    if(!kSignalTwoGamma(sp)) 
-      return -1.;
-
-    const unsigned pion_id = kPiZeroID(sp);
-    if(pion_id == 999999)
-      return -1.;
-
-    auto const& pion = sp->mc.nu[kBestNuID(sp)].prim[pion_id];
-    auto const& daughters = pion.daughters;
-
-    if(daughters.size() != 2)
-      return -1.;
-
-    int photon_one_id = daughters[0];
-    int photon_two_id = daughters[1];
+    if(!kSignalTwoGamma(sp)) return -1.;
+    
+    int photon_one_id = sp->true_particles[kPiZeroLeadingPhotonID(sp)].G4ID;
+    int photon_two_id = sp->true_particles[kPiZeroSubLeadingPhotonID(sp)].G4ID;
 
     bool reco_one = false, reco_two = false;
 
@@ -141,21 +155,10 @@ const SpillVar kPiZeroThresholdRecoStatus([](const caf::SRSpillProxy *sp) {
   });
 
 const SpillVar kPiZeroHighThresholdRecoStatus([](const caf::SRSpillProxy *sp) {
-    if(!kSignalTwoGamma(sp)) 
-      return -1.;
-
-    const unsigned pion_id = kPiZeroID(sp);
-    if(pion_id == 999999)
-      return -1.;
-
-    auto const& pion = sp->mc.nu[kBestNuID(sp)].prim[pion_id];
-    auto const& daughters = pion.daughters;
-
-    if(daughters.size() != 2)
-      return -1.;
-
-    int photon_one_id = daughters[0];
-    int photon_two_id = daughters[1];
+    if(!kSignalTwoGamma(sp)) return -1.;
+    
+    int photon_one_id = sp->true_particles[kPiZeroLeadingPhotonID(sp)].G4ID;
+    int photon_two_id = sp->true_particles[kPiZeroSubLeadingPhotonID(sp)].G4ID;
 
     bool reco_one = false, reco_two = false;
 
@@ -181,21 +184,10 @@ const SpillVar kPiZeroHighThresholdRecoStatus([](const caf::SRSpillProxy *sp) {
       return 4.;
   });
 
-const SpillVar kPiZeroPhotonOneRecoShws([](const caf::SRSpillProxy *sp) -> int {
-    if(!kSignalTwoGamma(sp)) 
-      return -1.;
-
-    const unsigned pion_id = kPiZeroID(sp);
-    if(pion_id == 999999)
-      return -1.;
-
-    auto const& pion = sp->mc.nu[kBestNuID(sp)].prim[pion_id];
-    auto const& daughters = pion.daughters;
-
-    if(daughters.size() != 2)
-      return -1.;
-
-    int photon_one_id = daughters[0];
+const SpillVar kPiZeroLeadingPhotonRecoShws([](const caf::SRSpillProxy *sp) -> int {
+    if(!kSignalTwoGamma(sp)) return -1.;
+    
+    int photon_one_id = sp->true_particles[kPiZeroLeadingPhotonID(sp)].G4ID;
 
     int nshw(0);
 
@@ -208,21 +200,10 @@ const SpillVar kPiZeroPhotonOneRecoShws([](const caf::SRSpillProxy *sp) -> int {
     return nshw;
   });
 
-const SpillVar kPiZeroPhotonOneRecoTrks([](const caf::SRSpillProxy *sp) -> int {
-    if(!kSignalTwoGamma(sp)) 
-      return -1.;
-
-    const unsigned pion_id = kPiZeroID(sp);
-    if(pion_id == 999999)
-      return -1.;
-
-    auto const& pion = sp->mc.nu[kBestNuID(sp)].prim[pion_id];
-    auto const& daughters = pion.daughters;
-
-    if(daughters.size() != 2)
-      return -1.;
-
-    int photon_one_id = daughters[0];
+const SpillVar kPiZeroLeadingPhotonRecoTrks([](const caf::SRSpillProxy *sp) -> int {
+    if(!kSignalTwoGamma(sp)) return -1.;
+    
+    int photon_one_id = sp->true_particles[kPiZeroLeadingPhotonID(sp)].G4ID;
 
     int ntrk(0);
 
@@ -235,21 +216,10 @@ const SpillVar kPiZeroPhotonOneRecoTrks([](const caf::SRSpillProxy *sp) -> int {
     return ntrk;
   });
 
-const SpillVar kPiZeroPhotonTwoRecoShws([](const caf::SRSpillProxy *sp) -> int {
-    if(!kSignalTwoGamma(sp)) 
-      return -1.;
-
-    const unsigned pion_id = kPiZeroID(sp);
-    if(pion_id == 999999)
-      return -1.;
-
-    auto const& pion = sp->mc.nu[kBestNuID(sp)].prim[pion_id];
-    auto const& daughters = pion.daughters;
-
-    if(daughters.size() != 2)
-      return -1.;
-
-    int photon_two_id = daughters[1];
+const SpillVar kPiZeroSubLeadingPhotonRecoShws([](const caf::SRSpillProxy *sp) -> int {
+    if(!kSignalTwoGamma(sp)) return -1.;
+    
+    int photon_two_id = sp->true_particles[kPiZeroSubLeadingPhotonID(sp)].G4ID;
 
     int nshw(0);
 
@@ -262,21 +232,10 @@ const SpillVar kPiZeroPhotonTwoRecoShws([](const caf::SRSpillProxy *sp) -> int {
     return nshw;
   });
 
-const SpillVar kPiZeroPhotonTwoRecoTrks([](const caf::SRSpillProxy *sp) -> int {
-    if(!kSignalTwoGamma(sp)) 
-      return -1.;
-
-    const unsigned pion_id = kPiZeroID(sp);
-    if(pion_id == 999999)
-      return -1.;
-
-    auto const& pion = sp->mc.nu[kBestNuID(sp)].prim[pion_id];
-    auto const& daughters = pion.daughters;
-
-    if(daughters.size() != 2)
-      return -1.;
-
-    int photon_two_id = daughters[1];
+const SpillVar kPiZeroSubLeadingPhotonRecoTrks([](const caf::SRSpillProxy *sp) -> int {
+    if(!kSignalTwoGamma(sp)) return -1.;
+    
+    int photon_two_id = sp->true_particles[kPiZeroSubLeadingPhotonID(sp)].G4ID;
 
     int ntrk(0);
 
