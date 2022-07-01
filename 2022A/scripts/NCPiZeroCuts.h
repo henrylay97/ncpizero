@@ -62,6 +62,30 @@ const SpillCut kHasAtLeast2Shws([](const caf::SRSpillProxy* sp) {
     return slc.reco.nshw > 1;
   });
 
+const SpillCut kLeadingShwdEdxCut([](const caf::SRSpillProxy* sp) {
+    if(kNShowers(sp) == 0) return false;
+
+    return kLeadingShwdEdx(sp) > 3.2;
+  });
+
+const SpillCut kSubLeadingShwdEdxCut([](const caf::SRSpillProxy* sp) {
+    if(kNShowers(sp) < 2) return false;
+
+    return kSubLeadingShwdEdx(sp) > 3.2;
+  });
+
+const SpillCut kHasTwoRazzlePhotons([](const caf::SRSpillProxy* sp) {
+    return kNRazzlePhotons(sp) == 2;
+  });
+
+const SpillCut kHasNoRazzleElectrons([](const caf::SRSpillProxy* sp) {
+    return kNRazzleElectrons(sp) == 0;
+  });
+
+const SpillCut kHasNoRazzleOther([](const caf::SRSpillProxy* sp) {
+    return kNRazzleOther(sp) == 0;
+  });
+
 std::vector<CutDef> ncpizero_cuts = { { "No Cut", "no_cut", kNoSpillCut },
 				      //				      { "Passes Flash Trigger", "pass_flash_trig", kPassesFlashTrig },
 				      { "Has Slc", "has_slc", kHasSlc },
@@ -73,4 +97,13 @@ std::vector<CutDef> ncpizero_cuts = { { "No Cut", "no_cut", kNoSpillCut },
 				      { "Has No Dazzle Pions", "has_no_dazzle_pions", kHasNoDazzlePions },
 				      { "Has No Dazzle Other", "has_no_dazzle_other", kHasNoDazzleOther },
 				      { "Has At Least 2 Showers", "has_two_shw", kHasAtLeast2Shws },
+				      //				      { "Leading Shower dE/dx > 3.2MeV/cm", "dedx_leading_shw_cut", kLeadingShwdEdxCut },
+				      //				      { "SubLeading Shower dE/dx > 3.2MeV/cm", "dedx_subleading_shw_cut", kSubLeadingShwdEdxCut },
+				      { "Has Two Razzle Photons", "has_two_razzle_photons", kHasTwoRazzlePhotons },
+				      { "Has No Razzle Electrons", "has_no_razzle_electrons", kHasNoRazzleElectrons },
+				      { "Has No Razzle Other", "has_no_razzle_other", kHasNoRazzleOther },
 };
+
+const SpillCut kFullSelection = kHasSlc && kHasNuSlc && kHasNuFVSlc && kHasCRUMBSSlc && kIsFV
+  && kHasNoDazzleMuons && kHasNoDazzlePions && kHasNoDazzleOther && kHasAtLeast2Shws
+  && kLeadingShwdEdxCut && kSubLeadingShwdEdxCut;

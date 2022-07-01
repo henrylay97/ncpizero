@@ -31,7 +31,7 @@ void ncpizero_basic_selection()
 
   const double gPOT = 6.6e20;
   const bool save = true;
-  const TString saveDir = "/sbnd/data/users/hlay/ncpizero/2022A/plots/ncpizero_basic_selection";
+  const TString saveDir = "/sbnd/data/users/hlay/ncpizero/2022A/plots/ncpizero_basic_selection_razzle";
 
   SpectrumLoader loaderNu(inputNameNu);
   SpectrumLoader loaderIntime(inputNameIntime);
