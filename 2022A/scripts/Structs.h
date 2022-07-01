@@ -22,6 +22,7 @@ struct Particle {
   int colour = kBlack;
   TString label = "";
   ParticleCut cut = kNoParticleCut;
+  SpillCut spillcut = kNoSpillCut;
 };
 
 struct CutDef {

@@ -17,15 +17,6 @@ const ParticleVar kDepositedEnergy([](const caf::SRParticleProxy* prt) {
   });
 
 const ParticleVar kTrueEnergy([](const caf::SRParticleProxy* prt) {
-    /* if(prt->parent < 20000000 && prt->start_process == 0 && prt->pdg==13 && kDepositsEnergy(prt)  */
-    /*    && prt->length > std::numeric_limits<double>::epsilon()) */
-    /*   std::cout << prt->startE << " " << prt->genE << " "  */
-    /* 		<< prt->length << " " << kDepositedEnergy(prt)  */
-    /* 		<< "\n\tgen: " << prt->gen.x << " " << prt->gen.y << " " << prt->gen.z */
-    /* 		<< "\n\tstart: " << prt->start.x << " " << prt->start.y << " " << prt->start.z << " " << prt->start_process */
-    /* 		<< "\n\tend: " << prt->end.x << " " << prt->end.y << " " << prt->end.z << " " << prt->end_process */
-    /* 		<< std::endl; */
-
     return prt->startE;
   });
 

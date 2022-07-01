@@ -8,6 +8,7 @@ using namespace ana;
 #include "/sbnd/data/users/hlay/cafstyle.C"
 
 #include "Structs.h"
+#include "TrueEventCategories.h"
 #include "TrueParticleVars.h"
 
 #include "TCanvas.h"
@@ -19,7 +20,7 @@ void physics_book()
   selectionstyle();
   setlocale(LC_NUMERIC, "");
   
-  const std::string inputNameNu = "defname: official_MCP2022A_prodoverlay_corsika_cosmics_proton_genie_rockbox_sce_reco2_concat_flat_caf_sbnd with limit 10";
+  const std::string inputNameNu = "defname: official_MCP2022A_prodoverlay_corsika_cosmics_proton_genie_rockbox_sce_reco2_concat_flat_caf_sbnd with limit 100";
 
   const double gPOT = 6.6e20;
   const bool save = true;
@@ -35,6 +36,7 @@ void physics_book()
 				      {"Electron", kBlue+2, "electron", kPrimaryElectronCut},
 				      {"Charged Pion", kGreen+2, "charged_pion", kPrimaryChargedPionCut},
 				      {"Neutral Pion", kYellow+1, "neutral_pion", kPrimaryNeutralPionCut},
+				      {"Signal Neutral Pion", kYellow+1, "signal_neutral_pion", kPrimaryNeutralPionCut, kSignal},
 				      {"Photon", kMagenta+2, "photon", kPrimaryPhotonCut},
 				      {"Proton", kCyan+2, "proton", kPrimaryProtonCut},
   };
@@ -49,7 +51,8 @@ void physics_book()
 
 	
 	      if(particle.label == "electron") bins = Binning::Simple(25,0,5);
-	      else if(particle.label == "charged_pion" || particle.label == "neutral_pion") 
+	      else if(particle.label == "charged_pion" || particle.label == "neutral_pion" 
+		      || particle.label == "signal_neutral_pion") 
 		bins = Binning::Simple(25,0,2);
 	      else if(particle.label == "photon") bins = Binning::Simple(25,0,0.05);
 	      else if(particle.label == "proton") bins = Binning::Simple(25,0,2);
@@ -57,7 +60,7 @@ void physics_book()
 	  
 	  std::string name = *plot.name.Data() + "_" + *particle.name.Data();
 	  sNu.emplace_back(new Spectrum(name, bins,
-					loaderNu, plot.variable, kNoSpillCut, particle.cut));
+					loaderNu, plot.variable, particle.spillcut, particle.cut));
 	}
     }
   loaderNu.Go();
