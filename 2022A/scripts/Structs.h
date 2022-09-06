@@ -29,4 +29,5 @@ struct CutDef {
   TString name = "";
   TString label = "";
   SpillCut cut = kNoSpillCut;
+  int colour = kBlack;
 };
