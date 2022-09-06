@@ -107,3 +107,23 @@ std::vector<CutDef> ncpizero_cuts = { { "No Cut", "no_cut", kNoSpillCut },
 const SpillCut kFullSelection = kHasSlc && kHasNuSlc && kHasNuFVSlc && kHasCRUMBSSlc && kIsFV
   && kHasNoDazzleMuons && kHasNoDazzlePions && kHasNoDazzleOther && kHasAtLeast2Shws
   && kLeadingShwdEdxCut && kSubLeadingShwdEdxCut;
+
+const SpillCut kPreSelection = kHasSlc && kHasNuSlc && kHasNuFVSlc;
+
+const SpillCut kCosmicRej    = kPreSelection && kHasCRUMBSSlc && kIsFV;
+
+const SpillCut kDazzleCuts   = kCosmicRej && kHasNoDazzleMuons && kHasNoDazzlePions 
+  && kHasNoDazzleOther;
+
+const SpillCut kShowerReq    = kDazzleCuts && kHasAtLeast2Shws;
+
+std::vector<CutDef> efficiency_cuts = { { "No Cut", "no_cut", kNoSpillCut , kBlack},
+					{ "Pre-Selection", "pre_selection", kPreSelection, kRed },
+					{ "Cosmic Rejection", "cosmic_rejection", kCosmicRej, kBlue },
+					{ "Dazzle Cuts", "dazzle_cuts", kDazzleCuts, kGreen },
+					{ "2 Showers", "shower_req", kShowerReq, kMagenta },
+};
+
+std::vector<CutDef> trigger_cuts = { { "No Cut", "no_cut", kNoSpillCut , kBlack},
+				     { "Flash Trigger", "flash_trigger", kPassesFlashTrig, kMagenta },
+};

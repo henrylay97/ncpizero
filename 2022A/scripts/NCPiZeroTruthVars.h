@@ -247,3 +247,38 @@ const SpillVar kPiZeroSubLeadingPhotonRecoTrks([](const caf::SRSpillProxy *sp) -
 
     return ntrk;
   });
+
+const SpillVar kPiZeroTrueEnergy([](const caf::SRSpillProxy *sp) -> double {
+    if(!kSignal(sp)) 
+      return -1.;
+    
+    return sp->mc.nu[kBestNuID(sp)].prim[kPiZeroID(sp)].startE;
+  });
+
+const SpillVar kPiZeroPhotonOpeningAngle([](const caf::SRSpillProxy *sp) -> double {
+    if(!kSignalTwoGamma(sp)) return -1.;
+
+    auto const& leadDir    = sp->true_particles[kPiZeroLeadingPhotonID(sp)].startp;
+    auto const& subleadDir = sp->true_particles[kPiZeroSubLeadingPhotonID(sp)].startp;
+
+    TVector3 leadDirVec    = TVector3(leadDir.x, leadDir.y, leadDir.z);
+    TVector3 subleadDirVec = TVector3(subleadDir.x, subleadDir.y, subleadDir.z);
+
+    return TMath::RadToDeg() * leadDirVec.Angle(subleadDirVec);
+  });
+
+std::vector<Plot<SpillVar>> effPlots = { { "Pi0 Energy", kPiZeroTrueEnergy, Binning::Simple(30,0,1.5), ";True E_{#pi^{0}};Efficiency", "pizero_true_energy", {.59,.57,.89,.85} },
+					 { "Pi0 Opening Angle", kPiZeroPhotonOpeningAngle, Binning::Simple(30,0,180), ";True #theta_{#gamma#gamma};Efficiency", "pizero_opening_angle", {.59,.57,.89,.85} },
+					 { "True Neutrino Energy", kTrueNuEn, Binning::Simple(24,0,3), ";E_{#nu} (GeV);Events", "nu_en", {.59,.57,.89,.85} },
+};
+
+std::vector<Plot<SpillVar>> triggerEffPlots = { { "Pi0 Energy", kPiZeroTrueEnergy, Binning::Simple(30,0,1.5), ";True E_{#pi^{0}};Efficiency", "pizero_true_energy", {.59,.57,.89,.75} },
+					 { "Pi0 Opening Angle", kPiZeroPhotonOpeningAngle, Binning::Simple(30,0,180), ";True #theta_{#gamma#gamma};Efficiency", "pizero_opening_angle", {.59,.65,.89,.83} },
+					 { "True Neutrino Energy", kTrueNuEn, Binning::Simple(24,0,3), ";E_{#nu} (GeV);Events", "nu_en", {.59,.57,.89,.75} },
+};
+
+std::vector<Plot<SpillVar>> triggerEffPlotsNuE = { { "Pi0 Energy", kPiZeroTrueEnergy, Binning::Simple(30,0,1.5), ";True E_{#pi^{0}};Efficiency", "pizero_true_energy", {.59,.57,.89,.75} },
+						   { "Pi0 Opening Angle", kPiZeroPhotonOpeningAngle, Binning::Simple(30,0,180), ";True #theta_{#gamma#gamma};Efficiency", "pizero_opening_angle", {.59,.65,.89,.83} },
+						   { "True Neutrino Energy", kTrueNuEn, Binning::Simple(25,0,5), ";E_{#nu} (GeV);Events", "nu_en", {.59,.57,.89,.75} },
+};
+					  
