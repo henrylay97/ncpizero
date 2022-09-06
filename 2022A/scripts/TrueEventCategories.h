@@ -151,6 +151,15 @@ const SpillCut kSignal([](const caf::SRSpillProxy* sp) {
     return kTrueFV(sp) && kNCPiZero(sp);
   });
 
+const SpillCut kSignalRes([](const caf::SRSpillProxy* sp) {
+    if(!kSignal(sp))
+      return false;
+
+    int mode = sp->mc.nu[kBestNuID(sp)].genie_mode;
+
+    return mode == 1;
+  });
+
 const SpillCut kNCNPiZero([](const caf::SRSpillProxy* sp) {
     return kNC(sp) && kNChargedPi(sp) == 0 && kNPiZero(sp) > 1;
   });
