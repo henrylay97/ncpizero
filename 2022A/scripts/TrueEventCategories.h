@@ -234,3 +234,13 @@ std::vector<TrueCategory> ncpizero_sel_categories = {
   {"Cosmic", kCosmicSpill, kRed+1, "Cosmic"},
   //  {"Other", !kNC && !kCCNuMu && !kCCNuE && !kDirt && !kCosmicSpill, kBlack, "Other"},
 };
+
+std::vector<TrueCategory> ncpizero_inverted_sel_categories = {
+  {"Other NC", kNC && !kSignal, kOrange+2, "NC"},
+  {"CC #nu_{#mu}", kCCNuMu, kGreen+2, "CCNuMu"},
+  {"CC #nu_{e}", kCCNuE, kCyan+2, "CCNuE"},
+  {"Dirt", kDirt, kOrange+3, "Dirt"},
+  {"Cosmic", kCosmicSpill, kRed+1, "Cosmic"},
+  {"Signal (NC #pi^{0})", kSignal, kMagenta+2, "Signal"},
+  //  {"Other", !kNC && !kCCNuMu && !kCCNuE && !kDirt && !kCosmicSpill, kBlack, "Other"},
+};

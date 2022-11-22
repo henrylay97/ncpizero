@@ -120,7 +120,7 @@ const SpillVar kPiZeroSimpleRecoStatus([](const caf::SRSpillProxy *sp) {
       return 2.;
     else if(reco_two)
       return 3.;
-    else 
+    else
       return 4.;
   });
 	

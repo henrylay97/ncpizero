@@ -614,5 +614,7 @@ std::vector<Plot<SpillVar>> recoPlots = { { "Flash Trigger", kFlashTrigVar, Binn
 					  { "Invariant Mass", kInvariantMass, Binning::Simple(30,0,400), ";Invariant Mass (MeV/c^{2});Events", "invariant_mass", {.59,.57,.89,.85} },
 					  { "Longest Track Length", kLongestTrkLen, Binning::Simple(40,0,150), ";Longest Track Length (cm);Events", "longest_trk_length", {.59,.57,.89,.85} },
 					  { "Longest Track PDG", kLongestTrkPDGPlot, binsPDGTrk, ";Longest Track PDG;Events", "longest_trk_pdg",  {.32,.57,.62,.85} },
+};
 
+std::vector<Plot<SpillVar>> recoInvertedPlots = { { "Invariant Mass", kInvariantMass, Binning::Simple(30,0,400), ";Invariant Mass (MeV/c^{2});Events", "invariant_mass_inverted", {.59,.57,.89,.85} },
 };
