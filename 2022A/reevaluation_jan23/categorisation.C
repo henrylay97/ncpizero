@@ -10,6 +10,7 @@ using namespace ana;
 #include "Structs.h"
 #include "TrueEventCategories.h"
 #include "DummyVar.h"
+#include "Cuts.h"
 
 #include "TCanvas.h"
 #include "TLegend.h"
@@ -19,16 +20,17 @@ using namespace ana;
 #include "TSystem.h"
 
 #include <string>
+#include <iomanip>
 
 void categorisation()
 {
   selectionstyle();
   setlocale(LC_NUMERIC, "");
   
-  const std::string inputNameNu = "defname: official_MCP2022A_prodoverlay_corsika_cosmics_proton_genie_rockbox_sce_reco2_concat_flat_caf_sbnd with limit 20";
-  const std::string inputNameIntime = "defname: official_MCP2022A_prodcorsika_proton_intime_filter_sce_reco2_concat_flat_caf_sbnd with limit 1";
+  const std::string inputNameNu = "defname: official_MCP2022A_prodoverlay_corsika_cosmics_proton_genie_rockbox_sce_reco2_concat_flat_caf_sbnd with limit 100";
+  const std::string inputNameIntime = "defname: official_MCP2022A_prodcorsika_proton_intime_filter_sce_reco2_concat_flat_caf_sbnd with limit 10";
 
-  const double gPOT = 1e18;
+  const double gPOT = 5e18;
   const bool save = true;
   const TString saveDir = "/sbnd/data/users/hlay/ncpizero/2022A/plots/reevaluation_jan23/categorisation";
 
@@ -38,14 +40,18 @@ void categorisation()
   std::vector<Spectrum*> sNu, sIntime;
 
   const Plot plot = DummyPlot;
+  const SpillCut cut = kNoSpillCut && kCRTHitVeto;
 
-  for(auto const& category : ncpizero_categories)
+  for(auto const& cut : ncpizero_cuts)
     {
-      std::string name = *category.label.Data() + "_" + *plot.name.Data();
-      sNu.emplace_back(new Spectrum("nu_" + name, plot.binning, loaderNu, 
-				    plot.variable, category.cut));
-      sIntime.emplace_back(new Spectrum("intime_" + name, plot.binning, 
-					loaderIntime, plot.variable, category.cut));
+      for(auto const& category : ncpizero_categories)
+        {
+          std::string name = *category.label.Data() + "_" + *plot.name.Data();
+          sNu.emplace_back(new Spectrum("nu_" + name, plot.binning, loaderNu,
+                                        plot.variable, category.cut && cut.cut));
+          sIntime.emplace_back(new Spectrum("intime_" + name, plot.binning,
+                                            loaderIntime, plot.variable, category.cut && cut.cut));
+        }
     }
 
   loaderNu.Go();
@@ -60,15 +66,34 @@ void categorisation()
   const int nuEvents            = nuLive;
   const double cosmicPOT        = nuEvents * nomInt / ( 1 - (1.f / 21.8f));
 
-  unsigned i = 0;
+  unsigned i = 0, j = 0;
+  std::vector<double> original(ncpizero_categories.size(), 0.);
+  std::set<unsigned> double_lined_set = {0, 2, 4, 6, 8, 9, 17};
 
-  for(auto const& category : ncpizero_categories)
+  for(auto const& cut : ncpizero_cuts)
     {
-      double integral = sNu[i]->Integral(gPOT);
-      integral += sIntime[i]->Integral(intimeScaledLive, 0, kLivetime);
+      std::cout << "\n Cut: " << cut.name << '\n' << std::endl;
 
-      std::cout << category.name << " \t" << integral << std::endl;
-      
-      ++i;
+      for(auto const& category : ncpizero_categories)
+        {
+          double integral = sNu[i]->Integral(gPOT);
+          integral += sIntime[i]->Integral(intimeScaledLive, 0, kLivetime);
+
+          if(j == 0)
+            original[i] = integral;
+
+          std::cout << std::setprecision(0) << std::fixed << category.latex_name << " & "
+                    << category.description << " & " << integral;
+          if(j != 0)
+            std::cout << " & " << std::setprecision(2) << 100. * integral / original[i - j * original.size()] << "\\%";
+
+          if(double_lined_set.find(i - j * original.size()) != double_lined_set.end())
+            std::cout << " \\\\ \\hline \\hline" << std::endl;
+          else
+            std::cout << " \\\\ \\hline" << std::endl;
+
+          ++i;
+        }
+      ++j;
     }
 }

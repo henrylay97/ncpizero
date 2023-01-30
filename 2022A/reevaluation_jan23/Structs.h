@@ -15,6 +15,8 @@ struct TrueCategory {
   SpillCut cut = kNoSpillCut;
   int colour = kBlack;
   TString label = "";
+  TString description = "";
+  TString latex_name = "";
 };
 
 struct CutDef {
