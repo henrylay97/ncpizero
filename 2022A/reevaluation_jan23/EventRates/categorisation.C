@@ -30,7 +30,7 @@ void categorisation()
   const std::string inputNameNu = "defname: official_MCP2022A_prodoverlay_corsika_cosmics_proton_genie_rockbox_sce_reco2_concat_flat_caf_sbnd with limit 100";
   const std::string inputNameIntime = "defname: official_MCP2022A_prodcorsika_proton_intime_filter_sce_reco2_concat_flat_caf_sbnd with limit 10";
 
-  const double gPOT = 5e18;
+  const double gPOT = 10e20;
   const bool save = true;
   const TString saveDir = "/sbnd/data/users/hlay/ncpizero/2022A/plots/reevaluation_jan23/categorisation";
 

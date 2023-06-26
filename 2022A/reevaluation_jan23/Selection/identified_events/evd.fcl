@@ -1,0 +1,3 @@
+#include "event_display_and_dump.fcl"
+
+physics.analyzers.eventdisp.SaveDir: "/sbnd/data/users/hlay/ncpizero/2022A/plots/spring2023/exploratory_evds/ccnumu_selected_events"
